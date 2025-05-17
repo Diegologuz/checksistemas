@@ -123,10 +123,49 @@
 
         window.onload = getLocation;
 
-        // Función para capturar la firma en un canvas
-        function getSignature(id) {
+        // Inicializar el canvas para la firma
+        function initSignatureCanvas(id) {
             const canvas = document.getElementById(id);
-            return canvas.toDataURL();  // Obtiene la firma en formato base64
+            const context = canvas.getContext('2d');
+
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            // Configuración para el color y grosor de la firma
+            context.lineWidth = 2;
+            context.lineJoin = 'round';
+            context.lineCap = 'round';
+            context.strokeStyle = '#000000';  // Color negro
+
+            // Funciones para manejar el dibujo
+            canvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                lastX = e.offsetX;
+                lastY = e.offsetY;
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const currentX = e.offsetX;
+                const currentY = e.offsetY;
+
+                context.beginPath();
+                context.moveTo(lastX, lastY);
+                context.lineTo(currentX, currentY);
+                context.stroke();
+
+                lastX = currentX;
+                lastY = currentY;
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isDrawing = false;
+            });
+
+            canvas.addEventListener('mouseout', () => {
+                isDrawing = false;
+            });
         }
 
         // Limpiar el canvas de firma
@@ -134,6 +173,12 @@
             const canvas = document.getElementById(id);
             const context = canvas.getContext('2d');
             context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Obtener la firma en formato base64
+        function getSignature(id) {
+            const canvas = document.getElementById(id);
+            return canvas.toDataURL();  // Obtiene la firma en formato base64
         }
 
         // Enviar el formulario por Email usando EmailJS
@@ -155,6 +200,14 @@
                     alert('Error al enviar el correo: ' + error.text);
                 });
         }
+
+        // Inicializa el canvas para la firma de Gerente y el Ingeniero
+        window.onload = function() {
+            getLocation();  // Obtener la ubicación
+            initSignatureCanvas('firma-gerente');  // Inicializar canvas para Gerente
+            initSignatureCanvas('firma-ingeniero');  // Inicializar canvas para Ingeniero
+        }
     </script>
 </body>
 </html>
+
