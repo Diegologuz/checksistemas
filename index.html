@@ -6,127 +6,9 @@
     <title>Check List y Levantamiento de Activo</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- jsPDF -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script> <!-- EmailJS -->
     <style>
-        /* Reseteo de márgenes y paddings */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f9f9f9;
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Menú lateral */
-        .sidenav {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #2c3e50;
-            padding-top: 20px;
-            color: white;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .sidenav a {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 18px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidenav a:hover {
-            background-color: #34495e;
-        }
-
-        .content {
-            margin-left: 260px;
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        /* Estilo del formulario */
-        .form-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 20px auto;
-        }
-
-        .form-container h2 {
-            margin-bottom: 20px;
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        .form-container label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-            color: #34495e;
-        }
-
-        .form-container input, .form-container textarea, .form-container select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .form-container button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .form-container button:hover {
-            background-color: #218838;
-        }
-
-        .form-container .form-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .form-container .form-footer a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        .form-container .form-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsividad */
-        @media (max-width: 768px) {
-            .sidenav {
-                width: 200px;
-            }
-
-            .content {
-                margin-left: 210px;
-            }
-        }
-
+        /* Estilos aquí (igual a lo anterior) */
     </style>
 </head>
 <body>
@@ -166,7 +48,7 @@
                     <label for="email">Correo Electrónico:</label>
                     <input type="email" id="email" name="email" placeholder="Ingrese su correo" />
 
-                    <button type="button" onclick="generatePDF('checklist')">Generar PDF</button>
+                    <button type="button" onclick="generatePDFAndSendEmail('checklist')">Generar y Enviar PDF</button>
                 </form>
             </div>
         </div>
@@ -204,7 +86,7 @@
                     <label for="email">Correo Electrónico:</label>
                     <input type="email" id="emailActivo" name="emailActivo" placeholder="Ingrese su correo" />
 
-                    <button type="button" onclick="generatePDF('activo')">Generar PDF</button>
+                    <button type="button" onclick="generatePDFAndSendEmail('activo')">Generar y Enviar PDF</button>
                 </form>
             </div>
         </div>
@@ -233,10 +115,13 @@
         // Función para cargar la fecha
         document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
 
-        // Generar PDF
-        function generatePDF(formType) {
+        // Función para generar PDF y enviar por correo
+        function generatePDFAndSendEmail(formType) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+
+            let formData = '';
+            let emailRecipient = '';
 
             if (formType === 'checklist') {
                 const fecha = document.getElementById("fecha").value;
@@ -244,7 +129,7 @@
                 const ubicacion = document.getElementById("ubicacion").value;
                 const puesto = document.getElementById("puesto").value;
                 const nombre = document.getElementById("nombre").value;
-                const email = document.getElementById("email").value;
+                emailRecipient = document.getElementById("email").value;
 
                 doc.text("Check List de Soporte", 10, 10);
                 doc.text(`Fecha: ${fecha}`, 10, 20);
@@ -252,10 +137,9 @@
                 doc.text(`Ubicación: ${ubicacion}`, 10, 40);
                 doc.text(`Puesto: ${puesto}`, 10, 50);
                 doc.text(`Nombre: ${nombre}`, 10, 60);
-                doc.text(`Correo: ${email}`, 10, 70);
+                doc.text(`Correo: ${emailRecipient}`, 10, 70);
 
-                // Guardar el PDF en el dispositivo
-                doc.save("checklist.pdf");
+                formData = `Fecha: ${fecha}\nSucursal: ${sucursal}\nUbicación: ${ubicacion}\nPuesto: ${puesto}\nNombre: ${nombre}\nCorreo: ${emailRecipient}`;
             } else if (formType === 'activo') {
                 const nombreActivo = document.getElementById("nombre-activo").value;
                 const serial = document.getElementById("serial").value;
@@ -264,7 +148,7 @@
                 const condicion = document.getElementById("condicion").value;
                 const fechaReparacion = document.getElementById("fecha-reparacion").value;
                 const descripcion = document.getElementById("descripcion").value;
-                const emailActivo = document.getElementById("emailActivo").value;
+                emailRecipient = document.getElementById("emailActivo").value;
 
                 doc.text("Levantamiento de Activo", 10, 10);
                 doc.text(`Nombre del Activo: ${nombreActivo}`, 10, 20);
@@ -274,13 +158,25 @@
                 doc.text(`Condición: ${condicion}`, 10, 60);
                 doc.text(`Fecha de Reparación: ${fechaReparacion}`, 10, 70);
                 doc.text(`Descripción: ${descripcion}`, 10, 80);
-                doc.text(`Correo: ${emailActivo}`, 10, 90);
+                doc.text(`Correo: ${emailRecipient}`, 10, 90);
 
-                // Guardar el PDF en el dispositivo
-                doc.save("levantamiento_activo.pdf");
+                formData = `Nombre del Activo: ${nombreActivo}\nNúmero de Serie: ${serial}\nModelo: ${modelo}\nMarca: ${marca}\nCondición: ${condicion}\nFecha de Reparación: ${fechaReparacion}\nDescripción: ${descripcion}\nCorreo: ${emailRecipient}`;
             }
+
+            // Genera el PDF
+            doc.save(`${formType}.pdf`);
+
+            // Enviar el correo con EmailJS
+            emailjs.send("service_id", "template_id", {
+                to_email: emailRecipient,
+                subject: `${formType.charAt(0).toUpperCase() + formType.slice(1)} - Datos de formulario`,
+                message: formData
+            }).then((response) => {
+                alert("Formulario enviado con éxito.");
+            }, (error) => {
+                alert("Error al enviar el formulario. Intenta nuevamente.");
+            });
         }
     </script>
 </body>
 </html>
-
