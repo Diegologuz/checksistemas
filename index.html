@@ -51,10 +51,6 @@
             border-radius: 4px;
         }
 
-        .form-group select {
-            font-size: 16px;
-        }
-
         .checklist {
             margin-top: 20px;
         }
@@ -211,15 +207,17 @@
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    const apiKey = 'YOUR_API_KEY'; // Debes usar tu API Key de geolocalización
-                    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`)
+
+                    // Usamos una API gratuita (o la geolocalización nativa)
+                    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
                         .then(response => response.json())
                         .then(data => {
-                            const location = data.results[0].components;
-                            const locationStr = `${location.city}, ${location.state}, ${location.country}`;
-                            document.getElementById('ubicacion').value = locationStr;
+                            if (data && data.address) {
+                                const locationStr = `${data.address.city || 'Desconocida'}, ${data.address.state || 'Desconocido'}, ${data.address.country || 'Desconocido'}`;
+                                document.getElementById('ubicacion').value = locationStr;
+                            }
                         })
-                        .catch(error => console.error('Error al obtener ubicación:', error));
+                        .catch(error => console.error('Error al obtener la ubicación:', error));
                 });
             } else {
                 alert("Geolocalización no disponible en tu navegador.");
@@ -259,4 +257,3 @@
     </script>
 </body>
 </html>
-
