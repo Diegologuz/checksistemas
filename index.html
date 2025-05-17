@@ -94,6 +94,16 @@
             <canvas id="firma-ingeniero" class="signature-canvas" width="500" height="150"></canvas>
             <button type="button" onclick="clearCanvas('firma-ingeniero')">Limpiar Firma</button>
 
+            <!-- Campos para correos electrónicos -->
+            <label for="correo1">Correo electrónico 1:</label>
+            <input type="email" id="correo1" name="correo1" required />
+
+            <label for="correo2">Correo electrónico 2:</label>
+            <input type="email" id="correo2" name="correo2" />
+
+            <label for="correo3">Correo electrónico 3:</label>
+            <input type="email" id="correo3" name="correo3" />
+
             <!-- Botón para Enviar -->
             <button type="button" onclick="sendEmail()">Enviar por Correo</button>
         </form>
@@ -202,13 +212,24 @@
             formData.append('firma_gerente', firmaGerente);
             formData.append('firma_ingeniero', firmaIngeniero);
 
-            // Enviar datos al backend usando EmailJS
-            emailjs.sendForm('TU_SERVICE_ID', 'TU_TEMPLATE_ID', formData)
-                .then(function(response) {
-                    alert('Correo enviado correctamente');
-                }, function(error) {
-                    alert('Error al enviar el correo: ' + error.text);
-                });
+            // Obtener los correos electrónicos
+            const correo1 = document.getElementById('correo1').value;
+            const correo2 = document.getElementById('correo2').value;
+            const correo3 = document.getElementById('correo3').value;
+
+            const correos = [correo1, correo2, correo3].filter(correo => correo); // Filtrar vacíos
+
+            // Enviar los correos usando EmailJS
+            correos.forEach(correo => {
+                formData.append('email', correo);  // Añadir los correos al formulario
+
+                emailjs.sendForm('TU_SERVICE_ID', 'TU_TEMPLATE_ID', formData)
+                    .then(function(response) {
+                        alert(`Correo enviado correctamente a ${correo}`);
+                    }, function(error) {
+                        alert(`Error al enviar el correo a ${correo}: ` + error.text);
+                    });
+            });
         }
 
         // Inicializa el canvas para la firma de Gerente y el Ingeniero
@@ -220,4 +241,3 @@
     </script>
 </body>
 </html>
-
