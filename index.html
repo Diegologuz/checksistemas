@@ -4,290 +4,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check List Soporte</title>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
-        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .checklist-container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 100%;
-            max-width: 900px; /* Limita el tamaño máximo en pantallas grandes */
-            box-sizing: border-box;
-            margin: 0 20px; /* Márgenes laterales para evitar que se corte en pantallas pequeñas */
+            background-color: #f4f4f9;
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .form-group label {
+        label {
             display: block;
+            margin-bottom: 10px;
             font-weight: bold;
-            margin-bottom: 5px;
         }
 
-        .form-group input,
-        .form-group select {
+        input, textarea, canvas {
             width: 100%;
             padding: 10px;
-            font-size: 1rem;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            box-sizing: border-box;
         }
 
-        .checklist {
-            margin-top: 20px;
-        }
-
-        .checklist label {
-            display: block;
-            margin: 10px 0;
-            font-size: 1rem;
-            color: #555;
-            cursor: pointer;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        .actions {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .actions button {
+        button {
             padding: 10px 20px;
-            background-color: #007BFF;
+            background-color: #28a745;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 1rem;
-            margin-right: 10px;
-            transition: background-color 0.3s;
         }
 
-        .actions button:hover {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #218838;
         }
 
-        .progress-bar {
-            width: 100%;
-            background-color: #ddd;
-            border-radius: 4px;
-            margin-top: 10px;
-            height: 8px;
-        }
-
-        .progress-bar-filled {
-            height: 100%;
-            background-color: #28a745;
-            border-radius: 4px;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 1rem;
-            color: #888;
-            margin-top: 20px;
-        }
-
-        /* Media Query para pantallas pequeñas (teléfonos) */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .form-group input,
-            .form-group select {
-                font-size: 0.9rem;
-            }
-
-            .actions button {
-                font-size: 0.9rem;
-            }
-
-            .checklist label {
-                font-size: 0.9rem;
-            }
+        .signature-canvas {
+            border: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
-    <div class="checklist-container">
+    <div class="form-container">
         <h1>Check List Soporte</h1>
-
-        <!-- Formulario de Datos Generales -->
+        
         <form id="checklist-form">
-            <div class="form-group">
-                <label for="fecha">Fecha</label>
-                <input type="text" id="fecha" disabled />
-            </div>
+            <!-- Datos Generales -->
+            <label for="fecha">Fecha:</label>
+            <input type="text" id="fecha" name="fecha" readonly />
 
-            <div class="form-group">
-                <label for="sucursal">Sucursal</label>
-                <input type="text" id="sucursal" placeholder="Escribe la sucursal" />
-            </div>
+            <label for="sucursal">Sucursal:</label>
+            <input type="text" id="sucursal" name="sucursal" />
 
-            <div class="form-group">
-                <label for="clave-sucursal">Clave de Sucursal</label>
-                <input type="text" id="clave-sucursal" placeholder="Escribe la clave" />
-            </div>
+            <label for="clave_sucursal">Clave de Sucursal:</label>
+            <input type="text" id="clave_sucursal" name="clave_sucursal" />
 
-            <div class="form-group">
-                <label for="ubicacion">Ubicación (Dirección completa)</label>
-                <input type="text" id="ubicacion" disabled />
-            </div>
+            <label for="ubicacion">Ubicación (Detectada):</label>
+            <input type="text" id="ubicacion" name="ubicacion" readonly />
 
-            <!-- Datos del usuario -->
-            <div class="form-group">
-                <label for="puesto">Puesto</label>
-                <input type="text" id="puesto" placeholder="Escribe tu puesto" />
-            </div>
+            <label for="puesto">Puesto:</label>
+            <input type="text" id="puesto" name="puesto" />
 
-            <div class="form-group">
-                <label for="telefono">Teléfono</label>
-                <input type="tel" id="telefono" placeholder="Escribe tu teléfono" />
-            </div>
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" />
 
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" placeholder="Escribe tu nombre" />
-            </div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" />
 
-            <!-- Información del equipo -->
-            <div class="form-group">
-                <label for="equipo">Tipo de Equipo</label>
-                <select id="equipo">
-                    <option value="CPU">CPU</option>
-                    <option value="Portátil">Portátil</option>
-                </select>
-            </div>
+            <!-- Firma Digital -->
+            <label>Firma del Gerente:</label>
+            <canvas id="firma-gerente" class="signature-canvas" width="500" height="150"></canvas>
+            <button type="button" onclick="clearCanvas('firma-gerente')">Limpiar Firma</button>
 
-            <!-- Checklist de tareas -->
-            <div class="checklist">
-                <label>
-                    <input type="checkbox" name="item1" /> Revisar hardware
-                </label>
-                <label>
-                    <input type="checkbox" name="item2" /> Actualizar software
-                </label>
-                <label>
-                    <input type="checkbox" name="item3" /> Limpiar equipo
-                </label>
-                <label>
-                    <input type="checkbox" name="item4" /> Configurar red
-                </label>
-                <label>
-                    <input type="checkbox" name="item5" /> Verificar backups
-                </label>
-            </div>
+            <label>Firma del Ingeniero de Sistemas:</label>
+            <canvas id="firma-ingeniero" class="signature-canvas" width="500" height="150"></canvas>
+            <button type="button" onclick="clearCanvas('firma-ingeniero')">Limpiar Firma</button>
 
-            <!-- Acciones -->
-            <div class="actions">
-                <button type="button" onclick="markAll()">Marcar todo</button>
-                <button type="button" onclick="clearAll()">Limpiar todo</button>
-            </div>
+            <!-- Botón para Enviar -->
+            <button type="button" onclick="sendEmail()">Enviar por Correo</button>
         </form>
-
-        <!-- Barra de progreso -->
-        <div class="progress-bar">
-            <div id="progress-bar-filled" class="progress-bar-filled"></div>
-        </div>
-
-        <div class="footer">
-            <p>Hecho con ❤️ por tu nombre.</p>
-        </div>
     </div>
 
     <script>
-        // Tu API Key de Google Maps
-        const apiKey = 'TU_API_KEY_DE_GOOGLE';
+        // Inicializar EmailJS
+        emailjs.init("TU_USER_ID");  // Reemplaza con tu ID de usuario de EmailJS
 
         // Cargar la fecha actual
         document.getElementById('fecha').value = new Date().toLocaleDateString();
 
-        // Función para detectar ubicación (dirección completa) usando Google Maps
+        // Función para obtener la ubicación del usuario
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
 
-                    // Usamos la Google Geocoding API para obtener la dirección completa
-                    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.results && data.results.length > 0) {
-                                const address = data.results[0].formatted_address;
-                                document.getElementById('ubicacion').value = address;
-                            } else {
-                                document.getElementById('ubicacion').value = "No se pudo obtener la dirección exacta.";
-                            }
-                        })
-                        .catch(error => console.error('Error al obtener la ubicación:', error));
-                }, function(error) {
-                    console.error(error);
-                    alert("No se pudo obtener la ubicación.");
+                    // Mostrar las coordenadas en el campo "ubicacion"
+                    document.getElementById('ubicacion').value = `Lat: ${lat}, Lon: ${lon}`;
                 });
             } else {
                 alert("Geolocalización no disponible en tu navegador.");
             }
         }
 
-        // Cargar ubicación al cargar la página
         window.onload = getLocation;
 
-        // Función para marcar todos los checkboxes
-        function markAll() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => checkbox.checked = true);
-            updateProgress();
+        // Función para capturar la firma en un canvas
+        function getSignature(id) {
+            const canvas = document.getElementById(id);
+            return canvas.toDataURL();  // Obtiene la firma en formato base64
         }
 
-        // Función para limpiar todos los checkboxes
-        function clearAll() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => checkbox.checked = false);
-            updateProgress();
+        // Limpiar el canvas de firma
+        function clearCanvas(id) {
+            const canvas = document.getElementById(id);
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Función para actualizar la barra de progreso
-        function updateProgress() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const total = checkboxes.length;
-            const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
-            const progress = (checked / total) * 100;
-            document.getElementById('progress-bar-filled').style.width = progress + '%';
-        }
+        // Enviar el formulario por Email usando EmailJS
+        function sendEmail() {
+            const formData = new FormData(document.getElementById('checklist-form'));
 
-        // Agregar evento de cambio para actualizar la barra de progreso
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', updateProgress);
-        });
+            // Obtener las firmas
+            const firmaGerente = getSignature('firma-gerente');
+            const firmaIngeniero = getSignature('firma-ingeniero');
+
+            formData.append('firma_gerente', firmaGerente);
+            formData.append('firma_ingeniero', firmaIngeniero);
+
+            // Enviar datos al backend usando EmailJS
+            emailjs.sendForm('TU_SERVICE_ID', 'TU_TEMPLATE_ID', formData)
+                .then(function(response) {
+                    alert('Correo enviado correctamente');
+                }, function(error) {
+                    alert('Error al enviar el correo: ' + error.text);
+                });
+        }
     </script>
 </body>
 </html>
-
