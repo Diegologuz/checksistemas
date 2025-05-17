@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check List y Levantamiento de Activo</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- jsPDF -->
     <style>
         /* Reseteo de márgenes y paddings */
         * {
@@ -142,7 +143,7 @@
         <div id="checklist-form" style="display:none;">
             <div class="form-container">
                 <h2>Check List de Soporte</h2>
-                <form>
+                <form id="checklistForm">
                     <label for="fecha">Fecha:</label>
                     <input type="text" id="fecha" name="fecha" value="2025-05-16" readonly />
 
@@ -162,7 +163,10 @@
                     <canvas id="firma" width="500" height="150" style="border:1px solid #ddd;"></canvas>
                     <button type="button" onclick="clearSignature()">Limpiar Firma</button>
 
-                    <button type="submit">Enviar Check List</button>
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="email" name="email" placeholder="Ingrese su correo" />
+
+                    <button type="button" onclick="generatePDF('checklist')">Generar PDF</button>
                 </form>
             </div>
         </div>
@@ -171,7 +175,7 @@
         <div id="activo-form" style="display:none;">
             <div class="form-container">
                 <h2>Levantamiento de Activo</h2>
-                <form>
+                <form id="activoForm">
                     <label for="nombre-activo">Nombre del Activo:</label>
                     <input type="text" id="nombre-activo" name="nombre-activo" required />
 
@@ -197,14 +201,17 @@
                     <label for="descripcion">Descripción del Problema:</label>
                     <textarea id="descripcion" name="descripcion" rows="4"></textarea>
 
-                    <button type="submit">Registrar Activo</button>
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="emailActivo" name="emailActivo" placeholder="Ingrese su correo" />
+
+                    <button type="button" onclick="generatePDF('activo')">Generar PDF</button>
                 </form>
             </div>
         </div>
 
     </div>
 
-    <!-- Script para navegación entre formularios -->
+    <!-- Script para navegación entre formularios y generación de PDF -->
     <script>
         document.getElementById("checklistBtn").addEventListener("click", function() {
             document.getElementById("checklist-form").style.display = "block";
@@ -225,6 +232,55 @@
 
         // Función para cargar la fecha
         document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
+
+        // Generar PDF
+        function generatePDF(formType) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            if (formType === 'checklist') {
+                const fecha = document.getElementById("fecha").value;
+                const sucursal = document.getElementById("sucursal").value;
+                const ubicacion = document.getElementById("ubicacion").value;
+                const puesto = document.getElementById("puesto").value;
+                const nombre = document.getElementById("nombre").value;
+                const email = document.getElementById("email").value;
+
+                doc.text("Check List de Soporte", 10, 10);
+                doc.text(`Fecha: ${fecha}`, 10, 20);
+                doc.text(`Sucursal: ${sucursal}`, 10, 30);
+                doc.text(`Ubicación: ${ubicacion}`, 10, 40);
+                doc.text(`Puesto: ${puesto}`, 10, 50);
+                doc.text(`Nombre: ${nombre}`, 10, 60);
+                doc.text(`Correo: ${email}`, 10, 70);
+
+                // Guardar el PDF en el dispositivo
+                doc.save("checklist.pdf");
+            } else if (formType === 'activo') {
+                const nombreActivo = document.getElementById("nombre-activo").value;
+                const serial = document.getElementById("serial").value;
+                const modelo = document.getElementById("modelo").value;
+                const marca = document.getElementById("marca").value;
+                const condicion = document.getElementById("condicion").value;
+                const fechaReparacion = document.getElementById("fecha-reparacion").value;
+                const descripcion = document.getElementById("descripcion").value;
+                const emailActivo = document.getElementById("emailActivo").value;
+
+                doc.text("Levantamiento de Activo", 10, 10);
+                doc.text(`Nombre del Activo: ${nombreActivo}`, 10, 20);
+                doc.text(`Número de Serie: ${serial}`, 10, 30);
+                doc.text(`Modelo: ${modelo}`, 10, 40);
+                doc.text(`Marca: ${marca}`, 10, 50);
+                doc.text(`Condición: ${condicion}`, 10, 60);
+                doc.text(`Fecha de Reparación: ${fechaReparacion}`, 10, 70);
+                doc.text(`Descripción: ${descripcion}`, 10, 80);
+                doc.text(`Correo: ${emailActivo}`, 10, 90);
+
+                // Guardar el PDF en el dispositivo
+                doc.save("levantamiento_activo.pdf");
+            }
+        }
     </script>
 </body>
 </html>
+
