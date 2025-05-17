@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checklist Profesional</title>
+    <title>Check List Soporte</title>
     <style>
-        /* Diseño básico */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f7fa;
@@ -21,22 +20,46 @@
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 30px;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             box-sizing: border-box;
         }
 
         h1 {
             text-align: center;
             color: #333;
+            font-size: 24px;
         }
 
-        form {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group select {
+            font-size: 16px;
+        }
+
+        .checklist {
             margin-top: 20px;
         }
 
-        label {
+        .checklist label {
             display: block;
             margin: 10px 0;
             font-size: 16px;
@@ -54,15 +77,15 @@
         }
 
         .actions button {
-            padding: 8px 16px;
+            padding: 10px 20px;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.3s;
             margin-right: 10px;
+            transition: background-color 0.3s;
         }
 
         .actions button:hover {
@@ -93,31 +116,82 @@
 </head>
 <body>
     <div class="checklist-container">
-        <h1>Mi Checklist Profesional</h1>
+        <h1>Check List Soporte</h1>
+
+        <!-- Formulario de Datos Generales -->
         <form id="checklist-form">
-            <label>
-                <input type="checkbox" name="item1" /> Comprar leche
-            </label>
-            <label>
-                <input type="checkbox" name="item2" /> Hacer ejercicio
-            </label>
-            <label>
-                <input type="checkbox" name="item3" /> Terminar el proyecto
-            </label>
-            <label>
-                <input type="checkbox" name="item4" /> Llamar a mamá
-            </label>
-            <label>
-                <input type="checkbox" name="item5" /> Leer un libro
-            </label>
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="text" id="fecha" disabled />
+            </div>
+
+            <div class="form-group">
+                <label for="sucursal">Sucursal</label>
+                <input type="text" id="sucursal" placeholder="Escribe la sucursal" />
+            </div>
+
+            <div class="form-group">
+                <label for="clave-sucursal">Clave de Sucursal</label>
+                <input type="text" id="clave-sucursal" placeholder="Escribe la clave" />
+            </div>
+
+            <div class="form-group">
+                <label for="ubicacion">Ubicación (Ciudad, Estado, País)</label>
+                <input type="text" id="ubicacion" disabled />
+            </div>
+
+            <!-- Datos del usuario -->
+            <div class="form-group">
+                <label for="puesto">Puesto</label>
+                <input type="text" id="puesto" placeholder="Escribe tu puesto" />
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" placeholder="Escribe tu teléfono" />
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Escribe tu nombre" />
+            </div>
+
+            <!-- Información del equipo -->
+            <div class="form-group">
+                <label for="equipo">Tipo de Equipo</label>
+                <select id="equipo">
+                    <option value="CPU">CPU</option>
+                    <option value="Portátil">Portátil</option>
+                </select>
+            </div>
+
+            <!-- Checklist de tareas -->
+            <div class="checklist">
+                <label>
+                    <input type="checkbox" name="item1" /> Revisar hardware
+                </label>
+                <label>
+                    <input type="checkbox" name="item2" /> Actualizar software
+                </label>
+                <label>
+                    <input type="checkbox" name="item3" /> Limpiar equipo
+                </label>
+                <label>
+                    <input type="checkbox" name="item4" /> Configurar red
+                </label>
+                <label>
+                    <input type="checkbox" name="item5" /> Verificar backups
+                </label>
+            </div>
+
+            <!-- Acciones -->
+            <div class="actions">
+                <button type="button" onclick="markAll()">Marcar todo</button>
+                <button type="button" onclick="clearAll()">Limpiar todo</button>
+            </div>
         </form>
-        
-        <div class="actions">
-            <button type="button" onclick="markAll()">Marcar todo</button>
-            <button type="button" onclick="clearAll()">Limpiar todo</button>
-            <button type="button" onclick="downloadPDF()">Descargar en PDF</button>
-        </div>
-        
+
+        <!-- Barra de progreso -->
         <div class="progress-bar">
             <div id="progress-bar-filled" class="progress-bar-filled"></div>
         </div>
@@ -127,15 +201,39 @@
         </div>
     </div>
 
-    <!-- Librería jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        // Cargar la fecha actual
+        document.getElementById('fecha').value = new Date().toLocaleDateString();
+
+        // Función para detectar ubicación (ciudad, estado, país)
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const apiKey = 'YOUR_API_KEY'; // Debes usar tu API Key de geolocalización
+                    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const location = data.results[0].components;
+                            const locationStr = `${location.city}, ${location.state}, ${location.country}`;
+                            document.getElementById('ubicacion').value = locationStr;
+                        })
+                        .catch(error => console.error('Error al obtener ubicación:', error));
+                });
+            } else {
+                alert("Geolocalización no disponible en tu navegador.");
+            }
+        }
+
+        // Cargar ubicación al cargar la página
+        window.onload = getLocation;
+
         // Función para marcar todos los checkboxes
         function markAll() {
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(checkbox => checkbox.checked = true);
             updateProgress();
-            saveToLocalStorage();
         }
 
         // Función para limpiar todos los checkboxes
@@ -143,7 +241,6 @@
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(checkbox => checkbox.checked = false);
             updateProgress();
-            saveToLocalStorage();
         }
 
         // Función para actualizar la barra de progreso
@@ -155,52 +252,11 @@
             document.getElementById('progress-bar-filled').style.width = progress + '%';
         }
 
-        // Función para guardar el estado en el localStorage
-        function saveToLocalStorage() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const checkboxStates = Array.from(checkboxes).map(checkbox => checkbox.checked);
-            localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
-        }
-
-        // Función para cargar el estado del checklist desde localStorage
-        function loadFromLocalStorage() {
-            const savedStates = JSON.parse(localStorage.getItem('checkboxStates'));
-            if (savedStates) {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                savedStates.forEach((state, index) => {
-                    checkboxes[index].checked = state;
-                });
-                updateProgress();
-            }
-        }
-
-        // Función para descargar el checklist en formato PDF
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            let y = 10;
-            checkboxes.forEach(checkbox => {
-                const checkboxLabel = checkbox.parentNode.innerText.trim();
-                const status = checkbox.checked ? '✔' : '❌';
-                doc.text(`${checkboxLabel}: ${status}`, 10, y);
-                y += 10;
-            });
-
-            doc.save('checklist.pdf');
-        }
-
-        // Agregar evento de cambio para actualizar la barra de progreso y guardar en localStorage
+        // Agregar evento de cambio para actualizar la barra de progreso
         document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                updateProgress();
-                saveToLocalStorage();
-            });
+            checkbox.addEventListener('change', updateProgress);
         });
-
-        // Inicializar la página cargando el estado desde localStorage al cargar
-        window.onload = loadFromLocalStorage;
     </script>
 </body>
 </html>
+
