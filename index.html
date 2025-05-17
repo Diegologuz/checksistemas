@@ -132,7 +132,7 @@
             </div>
 
             <div class="form-group">
-                <label for="ubicacion">Ubicación (Ciudad, Estado, País)</label>
+                <label for="ubicacion">Ubicación (Dirección completa)</label>
                 <input type="text" id="ubicacion" disabled />
             </div>
 
@@ -201,20 +201,22 @@
         // Cargar la fecha actual
         document.getElementById('fecha').value = new Date().toLocaleDateString();
 
-        // Función para detectar ubicación (ciudad, estado, país)
+        // Función para detectar ubicación (dirección completa)
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
 
-                    // Usamos una API gratuita (o la geolocalización nativa)
-                    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+                    // Usamos OpenStreetMap para obtener la dirección completa
+                    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`)
                         .then(response => response.json())
                         .then(data => {
                             if (data && data.address) {
-                                const locationStr = `${data.address.city || 'Desconocida'}, ${data.address.state || 'Desconocido'}, ${data.address.country || 'Desconocido'}`;
-                                document.getElementById('ubicacion').value = locationStr;
+                                const locationStr = `${data.address.road || ''} ${data.address.house_number || ''}, ${data.address.city || 'Desconocida'}, ${data.address.state || 'Desconocido'}, ${data.address.country || 'Desconocido'}`;
+                                document.getElementById('ubicacion').value = locationStr.trim();
+                            } else {
+                                document.getElementById('ubicacion').value = "No se pudo obtener la dirección exacta.";
                             }
                         })
                         .catch(error => console.error('Error al obtener la ubicación:', error));
