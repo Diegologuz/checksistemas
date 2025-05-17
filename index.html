@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check List y Levantamiento de Activo</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.0.0/dist/email.min.js"></script> <!-- EmailJS SDK v4 -->
+    <!-- Cargar SDK de EmailJS (versión v4) -->
+    <script type="module">
+      import * as emailjs from 'https://cdn.emailjs.com/dist/email.min.js';
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- jsPDF -->
     <style>
         /* Estilos globales */
@@ -216,13 +219,10 @@
 
         // Limpia la firma digital
         function clearSignature() {
-            const canvas = document.getElementById("firma");
-            const context = canvas.getContext("2d");
+            const canvas = document.getElementById('firma');
+            const context = canvas.getContext('2d');
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
-
-        // Función para cargar la fecha
-        document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
 
         // Función para generar PDF y enviar por correo
         function generatePDFAndSendEmail(formType) {
@@ -290,4 +290,3 @@
     </script>
 </body>
 </html>
-
