@@ -3,30 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checklist</title>
+    <title>Checklist Profesional</title>
+    <style>
+        /* Diseño básico */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .checklist-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .actions button {
+            padding: 8px 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .actions button:hover {
+            background-color: #0056b3;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+            height: 8px;
+        }
+
+        .progress-bar-filled {
+            height: 100%;
+            background-color: #28a745;
+            border-radius: 4px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Mi Checklist</h1>
-    <form>
-        <label>
-            <input type="checkbox" name="item1" /> Comprar leche
-        </label><br>
+    <div class="checklist-container">
+        <h1>Mi Checklist Profesional</h1>
+        <form id="checklist-form">
+            <label>
+                <input type="checkbox" name="item1" /> Comprar leche
+            </label>
+            <label>
+                <input type="checkbox" name="item2" /> Hacer ejercicio
+            </label>
+            <label>
+                <input type="checkbox" name="item3" /> Terminar el proyecto
+            </label>
+            <label>
+                <input type="checkbox" name="item4" /> Llamar a mamá
+            </label>
+            <label>
+                <input type="checkbox" name="item5" /> Leer un libro
+            </label>
+        </form>
+        
+        <div class="actions">
+            <button type="button" onclick="markAll()">Marcar todo</button>
+            <button type="button" onclick="clearAll()">Limpiar todo</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div id="progress-bar-filled" class="progress-bar-filled"></div>
+        </div>
 
-        <label>
-            <input type="checkbox" name="item2" /> Hacer ejercicio
-        </label><br>
+        <div class="footer">
+            <p>Hecho con ❤️ por tu nombre.</p>
+        </div>
+    </div>
 
-        <label>
-            <input type="checkbox" name="item3" /> Terminar el proyecto
-        </label><br>
+    <script>
+        // Función para marcar todos los checkboxes
+        function markAll() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = true);
+            updateProgress();
+        }
 
-        <label>
-            <input type="checkbox" name="item4" /> Llamar a mamá
-        </label><br>
+        // Función para limpiar todos los checkboxes
+        function clearAll() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            updateProgress();
+        }
 
-        <label>
-            <input type="checkbox" name="item5" /> Leer un libro
-        </label><br>
-    </form>
+        // Función para actualizar la barra de progreso
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+            const progress = (checked / total) * 100;
+            document.getElementById('progress-bar-filled').style.width = progress + '%';
+        }
+
+        // Agregar evento de cambio para actualizar la barra de progreso
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateProgress);
+        });
+
+        // Inicializar la barra de progreso al cargar la página
+        window.onload = updateProgress;
+    </script>
 </body>
 </html>
