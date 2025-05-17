@@ -3,258 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check List Soporte</title>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <title>Check List y Levantamiento de Activo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Reseteo de márgenes y paddings */
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Menú lateral */
+        .sidenav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #2c3e50;
+            padding-top: 20px;
+            color: white;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidenav a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            background-color: #34495e;
+        }
+
+        .content {
+            margin-left: 260px;
             padding: 20px;
-            background-color: #f4f4f9;
+            flex-grow: 1;
         }
 
-        h1 {
-            text-align: center;
-        }
-
+        /* Estilo del formulario */
         .form-container {
             background-color: white;
             border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 800px;
-            margin: 0 auto;
+            margin: 20px auto;
         }
 
-        label {
+        .form-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .form-container label {
             display: block;
             margin-bottom: 10px;
-            font-weight: bold;
+            font-weight: 500;
+            color: #34495e;
         }
 
-        input, textarea, canvas {
+        .form-container input, .form-container textarea, .form-container select {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
 
-        button {
-            padding: 10px 20px;
+        .form-container button {
             background-color: #28a745;
             color: white;
+            padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
         }
 
-        button:hover {
+        .form-container button:hover {
             background-color: #218838;
         }
 
-        .signature-canvas {
-            border: 1px solid #ddd;
-        }
-
-        .confirmation-message {
-            display: none;
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border-radius: 4px;
+        .form-container .form-footer {
             text-align: center;
             margin-top: 20px;
         }
+
+        .form-container .form-footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .form-container .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .sidenav {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 210px;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Check List Soporte</h1>
-        
-        <form id="checklist-form">
-            <!-- Datos Generales -->
-            <label for="fecha">Fecha:</label>
-            <input type="text" id="fecha" name="fecha" readonly />
-
-            <label for="sucursal">Sucursal:</label>
-            <input type="text" id="sucursal" name="sucursal" />
-
-            <label for="clave_sucursal">Clave de Sucursal:</label>
-            <input type="text" id="clave_sucursal" name="clave_sucursal" />
-
-            <label for="ubicacion">Ubicación (Detectada):</label>
-            <input type="text" id="ubicacion" name="ubicacion" readonly />
-
-            <label for="puesto">Puesto:</label>
-            <input type="text" id="puesto" name="puesto" />
-
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" name="telefono" />
-
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" />
-
-            <!-- Firma Digital -->
-            <label>Firma del Gerente:</label>
-            <canvas id="firma-gerente" class="signature-canvas" width="500" height="150"></canvas>
-            <button type="button" onclick="clearCanvas('firma-gerente')">Limpiar Firma</button>
-
-            <label>Firma del Ingeniero de Sistemas:</label>
-            <canvas id="firma-ingeniero" class="signature-canvas" width="500" height="150"></canvas>
-            <button type="button" onclick="clearCanvas('firma-ingeniero')">Limpiar Firma</button>
-
-            <!-- Campos para correos electrónicos -->
-            <label for="correo1">Correo electrónico 1:</label>
-            <input type="email" id="correo1" name="correo1" required />
-
-            <label for="correo2">Correo electrónico 2:</label>
-            <input type="email" id="correo2" name="correo2" />
-
-            <label for="correo3">Correo electrónico 3:</label>
-            <input type="email" id="correo3" name="correo3" />
-
-            <!-- Botón para Enviar -->
-            <button type="button" onclick="sendEmail()">Enviar por Correo</button>
-        </form>
-
-        <!-- Mensaje de confirmación -->
-        <div id="confirmation-message" class="confirmation-message">
-            Información enviada correctamente.
-        </div>
+    <!-- Menú Lateral -->
+    <div class="sidenav">
+        <h2 style="color: white; text-align: center; padding-bottom: 20px;">Soporte y Gestión</h2>
+        <a href="javascript:void(0)" id="checklistBtn">Check List</a>
+        <a href="javascript:void(0)" id="activoBtn">Levantamiento de Activo</a>
     </div>
 
+    <!-- Contenido Principal -->
+    <div class="content" id="content-area">
+        <!-- Check List -->
+        <div id="checklist-form" style="display:none;">
+            <div class="form-container">
+                <h2>Check List de Soporte</h2>
+                <form>
+                    <label for="fecha">Fecha:</label>
+                    <input type="text" id="fecha" name="fecha" value="2025-05-16" readonly />
+
+                    <label for="sucursal">Sucursal:</label>
+                    <input type="text" id="sucursal" name="sucursal" />
+
+                    <label for="ubicacion">Ubicación (Detectada):</label>
+                    <input type="text" id="ubicacion" name="ubicacion" readonly />
+
+                    <label for="puesto">Puesto:</label>
+                    <input type="text" id="puesto" name="puesto" />
+
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" />
+
+                    <label for="firma">Firma Digital:</label>
+                    <canvas id="firma" width="500" height="150" style="border:1px solid #ddd;"></canvas>
+                    <button type="button" onclick="clearSignature()">Limpiar Firma</button>
+
+                    <button type="submit">Enviar Check List</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Levantamiento de Activo -->
+        <div id="activo-form" style="display:none;">
+            <div class="form-container">
+                <h2>Levantamiento de Activo</h2>
+                <form>
+                    <label for="nombre-activo">Nombre del Activo:</label>
+                    <input type="text" id="nombre-activo" name="nombre-activo" required />
+
+                    <label for="serial">Número de Serie:</label>
+                    <input type="text" id="serial" name="serial" required />
+
+                    <label for="modelo">Modelo:</label>
+                    <input type="text" id="modelo" name="modelo" required />
+
+                    <label for="marca">Marca:</label>
+                    <input type="text" id="marca" name="marca" required />
+
+                    <label for="condicion">Condición:</label>
+                    <select id="condicion" name="condicion">
+                        <option value="bueno">Bueno</option>
+                        <option value="regular">Regular</option>
+                        <option value="malo">Malo</option>
+                    </select>
+
+                    <label for="fecha-reparacion">Fecha de Reparación:</label>
+                    <input type="date" id="fecha-reparacion" name="fecha-reparacion" />
+
+                    <label for="descripcion">Descripción del Problema:</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+
+                    <button type="submit">Registrar Activo</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script para navegación entre formularios -->
     <script>
-        // Inicializar EmailJS
-        emailjs.init("TU_USER_ID");  // Reemplaza con tu ID de usuario de EmailJS
+        document.getElementById("checklistBtn").addEventListener("click", function() {
+            document.getElementById("checklist-form").style.display = "block";
+            document.getElementById("activo-form").style.display = "none";
+        });
 
-        // Cargar la fecha actual
-        document.getElementById('fecha').value = new Date().toLocaleDateString();
+        document.getElementById("activoBtn").addEventListener("click", function() {
+            document.getElementById("activo-form").style.display = "block";
+            document.getElementById("checklist-form").style.display = "none";
+        });
 
-        // Función para obtener la ubicación del usuario
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-
-                    // Mostrar las coordenadas en el campo "ubicacion"
-                    document.getElementById('ubicacion').value = `Lat: ${lat}, Lon: ${lon}`;
-                });
-            } else {
-                alert("Geolocalización no disponible en tu navegador.");
-            }
-        }
-
-        window.onload = getLocation;
-
-        // Inicializar el canvas para la firma
-        function initSignatureCanvas(id) {
-            const canvas = document.getElementById(id);
-            const context = canvas.getContext('2d');
-
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
-
-            // Configuración para el color y grosor de la firma
-            context.lineWidth = 2;
-            context.lineJoin = 'round';
-            context.lineCap = 'round';
-            context.strokeStyle = '#000000';  // Color negro
-
-            // Función para obtener las coordenadas exactas dentro del canvas
-            function getMousePos(event) {
-                const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                return { x, y };
-            }
-
-            // Funciones para manejar el dibujo
-            canvas.addEventListener('mousedown', (e) => {
-                isDrawing = true;
-                const pos = getMousePos(e);
-                lastX = pos.x;
-                lastY = pos.y;
-            });
-
-            canvas.addEventListener('mousemove', (e) => {
-                if (!isDrawing) return;
-                const pos = getMousePos(e);
-                const currentX = pos.x;
-                const currentY = pos.y;
-
-                context.beginPath();
-                context.moveTo(lastX, lastY);
-                context.lineTo(currentX, currentY);
-                context.stroke();
-
-                lastX = currentX;
-                lastY = currentY;
-            });
-
-            canvas.addEventListener('mouseup', () => {
-                isDrawing = false;
-            });
-
-            canvas.addEventListener('mouseout', () => {
-                isDrawing = false;
-            });
-        }
-
-        // Limpiar el canvas de firma
-        function clearCanvas(id) {
-            const canvas = document.getElementById(id);
-            const context = canvas.getContext('2d');
+        // Limpia la firma digital
+        function clearSignature() {
+            const canvas = document.getElementById("firma");
+            const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Obtener la firma en formato base64
-        function getSignature(id) {
-            const canvas = document.getElementById(id);
-            return canvas.toDataURL();  // Obtiene la firma en formato base64
-        }
-
-        // Enviar el formulario por Email usando EmailJS
-        function sendEmail() {
-            const formData = new FormData(document.getElementById('checklist-form'));
-
-            // Obtener las firmas
-            const firmaGerente = getSignature('firma-gerente');
-            const firmaIngeniero = getSignature('firma-ingeniero');
-
-            formData.append('firma_gerente', firmaGerente);
-            formData.append('firma_ingeniero', firmaIngeniero);
-
-            // Obtener los correos electrónicos
-            const correo1 = document.getElementById('correo1').value;
-            const correo2 = document.getElementById('correo2').value;
-            const correo3 = document.getElementById('correo3').value;
-
-            const correos = [correo1, correo2, correo3].filter(correo => correo); // Filtrar vacíos
-
-            // Enviar los correos usando EmailJS
-            correos.forEach(correo => {
-                formData.append('email', correo);  // Añadir los correos al formulario
-
-                emailjs.sendForm('TU_SERVICE_ID', 'TU_TEMPLATE_ID', formData)
-                    .then(function(response) {
-                        // Mostrar mensaje de confirmación
-                        document.getElementById('confirmation-message').style.display = 'block';
-                    }, function(error) {
-                        alert(`Error al enviar el correo a ${correo}: ` + error.text);
-                    });
-            });
-        }
-
-        // Inicializa el canvas para la firma de Gerente y el Ingeniero
-        window.onload = function() {
-            getLocation();  // Obtener la ubicación
-            initSignatureCanvas('firma-gerente');  // Inicializar canvas para Gerente
-            initSignatureCanvas('firma-ingeniero');  // Inicializar canvas para Ingeniero
-        }
+        // Función para cargar la fecha
+        document.getElementById("fecha").value = new Date().toISOString().split("T")[0];
     </script>
 </body>
 </html>
-
