@@ -8,7 +8,113 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- jsPDF -->
     <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script> <!-- EmailJS -->
     <style>
-        /* Estilos aquí (igual a lo anterior) */
+        /* Estilos globales */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        h2 {
+            color: #333;
+        }
+
+        /* Menú Lateral */
+        .sidenav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #2f3b52;
+            padding-top: 20px;
+            padding-left: 20px;
+        }
+        .sidenav a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .sidenav a:hover {
+            background-color: #575f72;
+        }
+
+        /* Contenido principal */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background-color: #2f3b52;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3c4b66;
+        }
+
+        button[type="button"] {
+            background-color: #e74c3c;
+        }
+
+        button[type="button"]:hover {
+            background-color: #c0392b;
+        }
+
+        /* Estilo del canvas de firma */
+        canvas {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Estilos para móviles */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .sidenav {
+                width: 200px;
+                padding-left: 15px;
+            }
+            .sidenav a {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -129,17 +235,18 @@
                 const ubicacion = document.getElementById("ubicacion").value;
                 const puesto = document.getElementById("puesto").value;
                 const nombre = document.getElementById("nombre").value;
-                emailRecipient = document.getElementById("email").value;
+                const email = document.getElementById("email").value;
+                
+                formData = `Fecha: ${fecha}\nSucursal: ${sucursal}\nUbicación: ${ubicacion}\nPuesto: ${puesto}\nNombre: ${nombre}\nCorreo: ${email}`;
+                emailRecipient = email;
 
-                doc.text("Check List de Soporte", 10, 10);
-                doc.text(`Fecha: ${fecha}`, 10, 20);
-                doc.text(`Sucursal: ${sucursal}`, 10, 30);
-                doc.text(`Ubicación: ${ubicacion}`, 10, 40);
-                doc.text(`Puesto: ${puesto}`, 10, 50);
-                doc.text(`Nombre: ${nombre}`, 10, 60);
-                doc.text(`Correo: ${emailRecipient}`, 10, 70);
+                doc.text(`Fecha: ${fecha}`, 10, 10);
+                doc.text(`Sucursal: ${sucursal}`, 10, 20);
+                doc.text(`Ubicación: ${ubicacion}`, 10, 30);
+                doc.text(`Puesto: ${puesto}`, 10, 40);
+                doc.text(`Nombre: ${nombre}`, 10, 50);
+                doc.text(`Correo: ${email}`, 10, 60);
 
-                formData = `Fecha: ${fecha}\nSucursal: ${sucursal}\nUbicación: ${ubicacion}\nPuesto: ${puesto}\nNombre: ${nombre}\nCorreo: ${emailRecipient}`;
             } else if (formType === 'activo') {
                 const nombreActivo = document.getElementById("nombre-activo").value;
                 const serial = document.getElementById("serial").value;
@@ -148,22 +255,22 @@
                 const condicion = document.getElementById("condicion").value;
                 const fechaReparacion = document.getElementById("fecha-reparacion").value;
                 const descripcion = document.getElementById("descripcion").value;
-                emailRecipient = document.getElementById("emailActivo").value;
+                const email = document.getElementById("emailActivo").value;
 
-                doc.text("Levantamiento de Activo", 10, 10);
-                doc.text(`Nombre del Activo: ${nombreActivo}`, 10, 20);
-                doc.text(`Número de Serie: ${serial}`, 10, 30);
-                doc.text(`Modelo: ${modelo}`, 10, 40);
-                doc.text(`Marca: ${marca}`, 10, 50);
-                doc.text(`Condición: ${condicion}`, 10, 60);
-                doc.text(`Fecha de Reparación: ${fechaReparacion}`, 10, 70);
-                doc.text(`Descripción: ${descripcion}`, 10, 80);
-                doc.text(`Correo: ${emailRecipient}`, 10, 90);
+                formData = `Nombre del Activo: ${nombreActivo}\nNúmero de Serie: ${serial}\nModelo: ${modelo}\nMarca: ${marca}\nCondición: ${condicion}\nFecha de Reparación: ${fechaReparacion}\nDescripción: ${descripcion}\nCorreo: ${email}`;
+                emailRecipient = email;
 
-                formData = `Nombre del Activo: ${nombreActivo}\nNúmero de Serie: ${serial}\nModelo: ${modelo}\nMarca: ${marca}\nCondición: ${condicion}\nFecha de Reparación: ${fechaReparacion}\nDescripción: ${descripcion}\nCorreo: ${emailRecipient}`;
+                doc.text(`Nombre del Activo: ${nombreActivo}`, 10, 10);
+                doc.text(`Número de Serie: ${serial}`, 10, 20);
+                doc.text(`Modelo: ${modelo}`, 10, 30);
+                doc.text(`Marca: ${marca}`, 10, 40);
+                doc.text(`Condición: ${condicion}`, 10, 50);
+                doc.text(`Fecha de Reparación: ${fechaReparacion}`, 10, 60);
+                doc.text(`Descripción: ${descripcion}`, 10, 70);
+                doc.text(`Correo: ${email}`, 10, 80);
             }
 
-            // Genera el PDF
+            // Generar el PDF
             doc.save(`${formType}.pdf`);
 
             // Enviar el correo con EmailJS
@@ -177,6 +284,10 @@
                 alert("Error al enviar el formulario. Intenta nuevamente.");
             });
         }
+
+        // Inicializar EmailJS
+        emailjs.init("user_yourEmailJSUserID");
     </script>
 </body>
 </html>
+
