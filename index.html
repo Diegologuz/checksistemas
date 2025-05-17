@@ -138,17 +138,27 @@
             context.lineCap = 'round';
             context.strokeStyle = '#000000';  // Color negro
 
+            // Función para obtener las coordenadas exactas dentro del canvas
+            function getMousePos(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                return { x, y };
+            }
+
             // Funciones para manejar el dibujo
             canvas.addEventListener('mousedown', (e) => {
                 isDrawing = true;
-                lastX = e.offsetX;
-                lastY = e.offsetY;
+                const pos = getMousePos(e);
+                lastX = pos.x;
+                lastY = pos.y;
             });
 
             canvas.addEventListener('mousemove', (e) => {
                 if (!isDrawing) return;
-                const currentX = e.offsetX;
-                const currentY = e.offsetY;
+                const pos = getMousePos(e);
+                const currentX = pos.x;
+                const currentY = pos.y;
 
                 context.beginPath();
                 context.moveTo(lastX, lastY);
