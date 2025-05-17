@@ -198,23 +198,26 @@
     </div>
 
     <script>
+        // Tu API Key de Google Maps
+        const apiKey = 'TU_API_KEY_DE_GOOGLE';
+
         // Cargar la fecha actual
         document.getElementById('fecha').value = new Date().toLocaleDateString();
 
-        // Función para detectar ubicación (dirección completa)
+        // Función para detectar ubicación (dirección completa) usando Google Maps
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
 
-                    // Usamos OpenStreetMap para obtener la dirección completa
-                    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`)
+                    // Usamos la Google Geocoding API para obtener la dirección completa
+                    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`)
                         .then(response => response.json())
                         .then(data => {
-                            if (data && data.address) {
-                                const locationStr = `${data.address.road || ''} ${data.address.house_number || ''}, ${data.address.city || 'Desconocida'}, ${data.address.state || 'Desconocido'}, ${data.address.country || 'Desconocido'}`;
-                                document.getElementById('ubicacion').value = locationStr.trim();
+                            if (data.results && data.results.length > 0) {
+                                const address = data.results[0].formatted_address;
+                                document.getElementById('ubicacion').value = address;
                             } else {
                                 document.getElementById('ubicacion').value = "No se pudo obtener la dirección exacta.";
                             }
