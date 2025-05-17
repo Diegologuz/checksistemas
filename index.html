@@ -56,6 +56,16 @@
         .signature-canvas {
             border: 1px solid #ddd;
         }
+
+        .confirmation-message {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -107,6 +117,11 @@
             <!-- Botón para Enviar -->
             <button type="button" onclick="sendEmail()">Enviar por Correo</button>
         </form>
+
+        <!-- Mensaje de confirmación -->
+        <div id="confirmation-message" class="confirmation-message">
+            Información enviada correctamente.
+        </div>
     </div>
 
     <script>
@@ -225,7 +240,8 @@
 
                 emailjs.sendForm('TU_SERVICE_ID', 'TU_TEMPLATE_ID', formData)
                     .then(function(response) {
-                        alert(`Correo enviado correctamente a ${correo}`);
+                        // Mostrar mensaje de confirmación
+                        document.getElementById('confirmation-message').style.display = 'block';
                     }, function(error) {
                         alert(`Error al enviar el correo a ${correo}: ` + error.text);
                     });
