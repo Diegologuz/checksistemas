@@ -62,6 +62,7 @@
             cursor: pointer;
             font-size: 14px;
             transition: background-color 0.3s;
+            margin-right: 10px;
         }
 
         .actions button:hover {
@@ -114,6 +115,7 @@
         <div class="actions">
             <button type="button" onclick="markAll()">Marcar todo</button>
             <button type="button" onclick="clearAll()">Limpiar todo</button>
+            <button type="button" onclick="downloadPDF()">Descargar en PDF</button>
         </div>
         
         <div class="progress-bar">
@@ -125,12 +127,15 @@
         </div>
     </div>
 
+    <!-- Librería jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         // Función para marcar todos los checkboxes
         function markAll() {
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(checkbox => checkbox.checked = true);
             updateProgress();
+            saveToLocalStorage();
         }
 
         // Función para limpiar todos los checkboxes
@@ -138,6 +143,7 @@
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(checkbox => checkbox.checked = false);
             updateProgress();
+            saveToLocalStorage();
         }
 
         // Función para actualizar la barra de progreso
@@ -149,13 +155,52 @@
             document.getElementById('progress-bar-filled').style.width = progress + '%';
         }
 
-        // Agregar evento de cambio para actualizar la barra de progreso
+        // Función para guardar el estado en el localStorage
+        function saveToLocalStorage() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkboxStates = Array.from(checkboxes).map(checkbox => checkbox.checked);
+            localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
+        }
+
+        // Función para cargar el estado del checklist desde localStorage
+        function loadFromLocalStorage() {
+            const savedStates = JSON.parse(localStorage.getItem('checkboxStates'));
+            if (savedStates) {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                savedStates.forEach((state, index) => {
+                    checkboxes[index].checked = state;
+                });
+                updateProgress();
+            }
+        }
+
+        // Función para descargar el checklist en formato PDF
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let y = 10;
+            checkboxes.forEach(checkbox => {
+                const checkboxLabel = checkbox.parentNode.innerText.trim();
+                const status = checkbox.checked ? '✔' : '❌';
+                doc.text(`${checkboxLabel}: ${status}`, 10, y);
+                y += 10;
+            });
+
+            doc.save('checklist.pdf');
+        }
+
+        // Agregar evento de cambio para actualizar la barra de progreso y guardar en localStorage
         document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', updateProgress);
+            checkbox.addEventListener('change', () => {
+                updateProgress();
+                saveToLocalStorage();
+            });
         });
 
-        // Inicializar la barra de progreso al cargar la página
-        window.onload = updateProgress;
+        // Inicializar la página cargando el estado desde localStorage al cargar
+        window.onload = loadFromLocalStorage;
     </script>
 </body>
 </html>
